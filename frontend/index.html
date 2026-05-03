@@ -1,23 +1,27 @@
-
 <!DOCTYPE html>
 <html>
+
 <head>
-  <title>Wumpus Agent</title>
-  <link rel="stylesheet" href="style.css">
+    <title>Wumpus Agent</title>
+    <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
-<h1>Wumpus World Agent</h1>
+    <h1>Wumpus World Agent</h1>
 
-<div id="grid"></div>
+    <div id="grid"></div>
 
-<div id="dashboard">
-  <p>Percepts: <span id="percepts"></span></p>
-  <p>Inference Steps: <span id="steps"></span></p>
-</div>
+    <div id="dashboard">
+        <h3>Agent Log</h3>
+        <div id="log" style="height:150px; overflow-y:auto; border:1px solid #ccc; padding:10px;"></div>
+        <p>Percepts: <span id="percepts"></span></p>
+        <p>Inference Steps: <span id="steps"></span></p>
+    </div>
 
-<button onclick="step()">Next Move</button>
+    <button onclick="step()">Next Move</button>
 
-<script src="app.js"></script>
+    <script src="app.js"></script>
 </body>
+
 </html>

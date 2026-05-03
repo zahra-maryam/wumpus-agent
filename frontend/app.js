@@ -1,9 +1,6 @@
 let rows = 6;
 let cols = 6;
 
-let agentPos = {x: 0, y: 0};
-let steps = 0;
-
 function createGrid() {
   let grid = document.getElementById("grid");
   grid.innerHTML = "";
@@ -18,18 +15,43 @@ function createGrid() {
   }
 }
 
-function step() {
-  steps++;
-  document.getElementById("steps").innerText = steps;
+async function step() {
+  const res = await fetch("http://127.0.0.1:5000/step");
+  const data = await res.json();
 
-  // simulate percepts
-  let percepts = ["Breeze", "Stench"][Math.floor(Math.random()*2)];
-  document.getElementById("percepts").innerText = percepts;
+  document.querySelectorAll(".cell").forEach(cell => {
+    cell.className = "cell unknown";
+    cell.innerHTML = "";
+  });
 
-  let cell = document.getElementById(`cell-${agentPos.x}-${agentPos.y}`);
-  cell.classList.add("safe");
+  data.safe.forEach(([x, y]) => {
+    document.getElementById(`cell-${x}-${y}`).classList.add("safe");
+  });
 
-  agentPos.x = (agentPos.x + 1) % rows;
+  data.danger.forEach(([x, y]) => {
+    document.getElementById(`cell-${x}-${y}`).classList.add("danger");
+  });
+
+  data.visited.forEach(([x, y]) => {
+    let cell = document.getElementById(`cell-${x}-${y}`);
+    cell.classList.add("safe");
+  });
+
+  let agentCell = document.getElementById(`cell-${data.x}-${data.y}`);
+  agentCell.classList.add("agent");
+
+  agentCell.innerHTML = `<div class="percept">${data.percepts.join("<br>")}</div>`;
+
+  document.getElementById("percepts").innerText = data.percepts.join(", ");
+  document.getElementById("steps").innerText = data.steps;
+
+  let log = document.getElementById("log");
+  log.innerHTML += `<p>Moved to (${data.x}, ${data.y}) → ${data.percepts.join(", ") || "No percepts"}</p>`;
+}
+
+async function reset() {
+  await fetch("http://127.0.0.1:5000/reset");
+  createGrid();
 }
 
 createGrid();
