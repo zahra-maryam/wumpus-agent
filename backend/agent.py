@@ -37,6 +37,7 @@ class Agent:
         self.position = (0, 0)
         self.visited = set()
         self.inference_steps = 0
+        self.visited.add((0, 0))
         self.safe = set()
         self.danger = set()
 
@@ -44,36 +45,58 @@ class Agent:
         percepts = self.world.get_percepts(*self.position)
         x, y = self.position
 
+        self.safe.add((x, y))
+
         directions = [(1,0), (-1,0), (0,1), (0,-1)]
 
         for dx, dy in directions:
             nx, ny = x + dx, y + dy
+
             if 0 <= nx < self.world.rows and 0 <= ny < self.world.cols:
-                if "Breeze" in percepts or "Stench" in percepts:
-                    self.danger.add((nx, ny))
-                else:
+
+                if "Breeze" not in percepts and "Stench" not in percepts:
                     self.safe.add((nx, ny))
+                    self.danger.discard((nx, ny))   # safer than remove()
 
+                else:
+                    if (nx, ny) not in self.safe and (nx, ny) not in self.visited:
+                        self.danger.add((nx, ny))
+
+        self.danger -= self.safe
         return percepts
-        
-def move(self):
-    x, y = self.position
-    directions = [(1,0), (0,1), (-1,0), (0,-1)]
 
-    for dx, dy in directions:
-        nx, ny = x + dx, y + dy
-        if (nx, ny) in self.safe and (nx, ny) not in self.visited:
-            self.position = (nx, ny)
-            self.visited.add((nx, ny))
-            self.inference_steps += 1
-            return self.position
+    def move(self):
+        x, y = self.position
+        directions = [(1,0), (0,1), (-1,0), (0,-1)]
 
-    for dx, dy in directions:
-        nx, ny = x + dx, y + dy
-        if (nx, ny) not in self.visited:
-            self.position = (nx, ny)
-            self.visited.add((nx, ny))
-            self.inference_steps += 1
-            return self.position
+        def in_bounds(nx, ny):
+            return 0 <= nx < self.world.rows and 0 <= ny < self.world.cols
 
-    return self.position
+        # 1. Prefer safe unvisited
+        for dx, dy in directions:
+            nx, ny = x + dx, y + dy
+            if in_bounds(nx, ny) and (nx, ny) in self.safe and (nx, ny) not in self.visited:
+                self.position = (nx, ny)
+                self.visited.add((nx, ny))
+                self.inference_steps += 1
+                return self.position
+
+        # 2. Explore unknown (not danger)
+        for dx, dy in directions:
+            nx, ny = x + dx, y + dy
+            if in_bounds(nx, ny) and (nx, ny) not in self.visited and (nx, ny) not in self.danger:
+                self.position = (nx, ny)
+                self.visited.add((nx, ny))
+                self.inference_steps += 1
+                return self.position
+
+        # 3. Last resort
+        for dx, dy in directions:
+            nx, ny = x + dx, y + dy
+            if in_bounds(nx, ny) and (nx, ny) not in self.visited:
+                self.position = (nx, ny)
+                self.visited.add((nx, ny))
+                self.inference_steps += 1
+                return self.position
+
+        return self.position

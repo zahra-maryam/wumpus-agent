@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from flask_cors import CORS
 from agent import WumpusWorld, Agent
 
@@ -29,11 +29,14 @@ def step():
         "visited": list(agent.visited)
     })
 
-
 @app.route("/reset", methods=["GET"])
 def reset():
     global world, agent
-    world = WumpusWorld(6, 6)
+
+    rows = int(request.args.get("rows", 6))
+    cols = int(request.args.get("cols", 6))
+
+    world = WumpusWorld(rows, cols)
     agent = Agent(world)
 
     return jsonify({"message": "reset successful"})

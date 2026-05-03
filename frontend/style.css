@@ -1,6 +1,6 @@
 #grid {
   display: grid;
-  grid-template-columns: repeat(6, 60px);
+  
   gap: 6px;
   margin-bottom: 20px;
 }
@@ -38,4 +38,33 @@
 /* Percepts text */
 .percept {
   font-size: 10px;
+}
+#main {
+  display: flex;
+  gap: 30px;
+  align-items: flex-start;
+}
+
+#sidepanel {
+  width: 250px;
+}
+
+#log {
+  height: 200px;
+  overflow-y: auto;
+  border: 1px solid #ccc;
+  padding: 10px;
+  background: #f9f9f9;
+}
+.percepts {
+  position: absolute;
+  bottom: 2px;
+  left: 2px;
+  display: flex;
+  gap: 2px;
+}
+
+.agent-icon {
+  font-weight: bold;
+  font-size: 14px;
 }

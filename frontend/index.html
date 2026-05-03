@@ -1,25 +1,58 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
-    <title>Wumpus Agent</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wumpus World Agent</title>
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-    <h1>Wumpus World Agent</h1>
+    <h1> Wumpus World Agent</h1>
 
-    <div id="grid"></div>
+    <div id="controls">
+        Rows: <input id="rows" type="number" value="6" min="2" max="10">
+        Cols: <input id="cols" type="number" value="6" min="2" max="10">
+        <button onclick="reset()"> Reset</button>
+        <button id="stepBtn" onclick="step()"> Next Move</button>
 
-    <div id="dashboard">
-        <h3>Agent Log</h3>
-        <div id="log" style="height:150px; overflow-y:auto; border:1px solid #ccc; padding:10px;"></div>
-        <p>Percepts: <span id="percepts"></span></p>
-        <p>Inference Steps: <span id="steps"></span></p>
     </div>
 
-    <button onclick="step()">Next Move</button>
+    <div id="main">
+        <div id="gridWrapper">
+            <!-- FIX: grid columns are set dynamically in JS -->
+            <div id="grid"></div>
+        </div>
+
+        <div id="sidepanel">
+            <h3> Dashboard</h3>
+            <table id="metrics">
+                <tr>
+                    <td>Percepts</td>
+                    <td id="percepts">—</td>
+                </tr>
+                <tr>
+                    <td>Inference Steps</td>
+                    <td id="steps">0</td>
+                </tr>
+            </table>
+
+            <h3> Agent Log</h3>
+            <div id="log"></div>
+
+            <h3> Legend</h3>
+            <div id="legend">
+                <div><span class="swatch agent-swatch"></span> Agent</div>
+                <div><span class="swatch safe-swatch"></span> Safe</div>
+                <div><span class="swatch danger-swatch"></span> Danger</div>
+                <div><span class="swatch unknown-swatch"></span> Unknown</div>
+                <div><span class="tag breeze">B</span> Breeze</div>
+                <div><span class="tag stench">S</span> Stench</div>
+            </div>
+        </div>
+    </div>
 
     <script src="app.js"></script>
 </body>
