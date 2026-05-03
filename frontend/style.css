@@ -1,0 +1,19 @@
+#grid {
+  display: grid;
+  grid-template-columns: repeat(6, 50px);
+  gap: 5px;
+}
+
+.cell {
+  width: 50px;
+  height: 50px;
+  background: gray;
+}
+
+.safe {
+  background: green;
+}
+
+.danger {
+  background: red;
+}
