@@ -2,11 +2,12 @@ let rows = 6;
 let cols = 6;
 let perceptMap = {};
 
+const API_BASE = "https://wumpus-agent-production-cb9a.up.railway.app";
+
 function createGrid() {
     let grid = document.getElementById("grid");
     grid.innerHTML = "";
 
-    
     grid.style.gridTemplateColumns = `repeat(${cols}, 60px)`;
 
     for (let i = 0; i < rows; i++) {
@@ -20,7 +21,7 @@ function createGrid() {
 }
 
 async function step() {
-    const res = await fetch("http://127.0.0.1:5000/step");
+    const res = await fetch(`${API_BASE}/step`);
     const data = await res.json();
 
     document.querySelectorAll(".cell").forEach(cell => {
@@ -46,7 +47,9 @@ async function step() {
 
     perceptMap[`${data.x}-${data.y}`] = data.percepts;
 
-    document.getElementById("percepts").innerText = data.percepts.join(", ");
+    document.getElementById("percepts").innerText =
+        data.percepts.length ? data.percepts.join(", ") : "None";
+
     document.getElementById("steps").innerText = data.steps;
 
     let log = document.getElementById("log");
@@ -55,10 +58,10 @@ async function step() {
     if (log.children.length > 20) {
         log.removeChild(log.firstChild);
     }
+
     for (let key in perceptMap) {
         let [x, y] = key.split("-").map(Number);
         let cell = document.getElementById(`cell-${x}-${y}`);
-
         let percepts = perceptMap[key];
 
         let html = percepts.map(p => {
@@ -66,21 +69,24 @@ async function step() {
             if (p === "Stench") return `<span class="tag stench">S</span>`;
             return "";
         }).join("");
+
         if (cell.classList.contains("agent")) {
             cell.innerHTML = `
-    <div class="agent-icon">A</div>
-    <div class="percepts">${html}</div>
-  `;
+                <div class="agent-icon">A</div>
+                <div class="percepts">${html}</div>
+            `;
         } else {
             cell.innerHTML = `<div class="percepts">${html}</div>`;
         }
     }
 }
+
 async function reset() {
     rows = parseInt(document.getElementById("rows").value);
     cols = parseInt(document.getElementById("cols").value);
 
-    await fetch(`http://127.0.0.1:5000/reset?rows=${rows}&cols=${cols}`);
+    await fetch(`${API_BASE}/reset?rows=${rows}&cols=${cols}`);
+
     perceptMap = {};
     createGrid();
 }
